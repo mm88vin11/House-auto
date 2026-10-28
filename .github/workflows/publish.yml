@@ -1,0 +1,84 @@
+name: "🏡 Опубликовать объявление"
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Что сделать
+        type: choice
+        default: Опубликовать там, где пора
+        options:
+          - Опубликовать там, где пора
+          - Пробный запуск (ничего не отправлять)
+          - Опубликовать везде прямо сейчас
+          - Снять все объявления (дом продан)
+          - Найти новые чаты и группы
+      only:
+        description: "Только эти площадки (id через пробел, необязательно)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "17 7 * * *"     # каждый день в 10:17 по Москве — интервалы каждой площадки решают, постить ли
+
+permissions:
+  contents: write            # чтобы сохранить журнал публикаций state/posts.json
+
+concurrency:
+  group: house-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Проверка
+        run: python -m unittest -q
+
+      - name: Публикация
+        env:
+          MODE: ${{ github.event.inputs.mode || 'Опубликовать там, где пора' }}
+          ONLY: ${{ github.event.inputs.only }}
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
+          TG_SESSION: ${{ secrets.TG_SESSION }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_OWNER_CHAT_ID: ${{ secrets.TG_OWNER_CHAT_ID }}
+          VK_TOKEN: ${{ secrets.VK_TOKEN }}
+        run: |
+          ARGS=()
+          if [ -n "$ONLY" ]; then ARGS+=(--only $ONLY); fi
+          case "$MODE" in
+            Пробный*)    python -m house_auto publish --dry-run "${ARGS[@]}" ;;
+            *везде*)     python -m house_auto publish --force "${ARGS[@]}" ;;
+            Снять*)      python -m house_auto remove "${ARGS[@]}" ;;
+            Найти*)      python -m house_auto discover ;;
+            *)           python -m house_auto publish "${ARGS[@]}" ;;
+          esac
+
+      - name: Пульт с текстами
+        if: always()
+        run: python -m house_auto site
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pult-kit
+          path: out/kit.html
+
+      - name: Сохранить журнал
+        if: always()
+        run: |
+          git config user.name "house-auto"
+          git config user.email "house-auto@users.noreply.github.com"
+          mkdir -p state && git add state/ && { [ -d candidates ] && git add candidates/ || true; }
+          git diff --cached --quiet || (git commit -m "Журнал публикаций $(date -u +%F)" && git push)

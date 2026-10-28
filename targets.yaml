@@ -1,0 +1,142 @@
+# Куда публикуем. Каждая запись — одна площадка.
+#
+# platform:
+#   telegram      — чат/группа в Telegram, пост от вашего аккаунта
+#   telegram_bot  — ВАШ канал, пост от вашего бота (бот — админ канала)
+#   vk            — стена сообщества ВК (или ваша стена), пост от вашего аккаунта
+#   manual        — сайт без API: текст готов в out/kit.html, разместить вручную один раз
+#
+# variant: full | medium | short | plain  — какой текст (см. `python -m house_auto texts`)
+# min_interval_days — не чаще, чем раз в N дней (уважайте правила чата!)
+# days — в какие дни недели можно (mon tue wed thu fri sat sun); пусто — в любой
+# topic_id — номер темы, если чат разбит на темы («Недвижимость» и т.п.)
+# delete_previous — перед новым постом удалить прошлый (чат не засоряется, админы довольны)
+# enabled — false, пока не проверили правила и не убедились, что объявления там разрешены
+#
+# Новые чаты и группы находит команда `python -m house_auto discover` → candidates/
+
+settings:
+  max_posts_per_run: 20        # не больше стольких постов за запуск
+  delay_seconds: [45, 120]     # пауза между постами на одной платформе
+  discover_keywords:
+    - Шахтёрск
+    - Шахтерск
+    - Шахтёрск объявления
+    - Шахтерск барахолка
+    - Торез объявления
+    - Енакиево объявления
+    - Харцызск объявления
+    - Кировское ДНР
+    - Донецк недвижимость
+    - ДНР недвижимость
+    - недвижимость ДНР продажа
+    - продажа домов Донецк
+    - дома ДНР
+    - Донецк объявления
+    - ДНР объявления
+    - Макеевка недвижимость
+
+defaults:
+  variant: medium
+  photos: 6
+  min_interval_days: 4
+  delete_previous: true
+  enabled: true
+
+targets:
+  # ───────────── Свои площадки (основа: сюда ведут все ссылки) ─────────────
+  - id: my_tg_channel
+    platform: telegram_bot
+    name: Мой канал «Продаётся дом, Шахтёрск»
+    chat: "@ВПИШИТЕ_СВОЙ_КАНАЛ"
+    variant: full
+    photos: 10
+    min_interval_days: 30        # закреплённый пост — обновляется раз в месяц
+    delete_previous: true
+    enabled: false               # включите, когда создадите канал и бота (README, шаг 3)
+
+  - id: my_vk_wall
+    platform: vk
+    name: Моя стена ВК
+    chat: "ВПИШИТЕ_СВОЙ_ID_ВК"   # число из адреса vk.com/id123456 → 123456
+    variant: full
+    photos: 10
+    min_interval_days: 7
+    enabled: false
+
+  # ───────────── Telegram-чаты ─────────────
+  # Пример. Реальные чаты возьмите из candidates/telegram.yaml после `discover`.
+  - id: tg_example_shakhtersk
+    platform: telegram
+    name: Пример — чат объявлений Шахтёрска
+    chat: "@ПРИМЕР_ЧАТА"
+    variant: medium
+    min_interval_days: 4
+    days: []                     # например [mon, thu], если в правилах «объявления по пн и чт»
+    enabled: false
+    note: замените на реальный чат
+
+  # ───────────── ВКонтакте ─────────────
+  - id: vk_example_group
+    platform: vk
+    name: Пример — группа «Объявления Шахтёрск»
+    chat: "ПРИМЕР_адрес_группы"  # vk.com/shahtersk_obyavleniya → shahtersk_obyavleniya
+    variant: full
+    min_interval_days: 5
+    enabled: false
+    note: замените на реальную группу из candidates/vk.yaml
+
+  # ───────────── Доски объявлений ДНР (вручную, один раз; объявление живёт долго) ─────────────
+  - id: ok_shakhtersk
+    platform: manual
+    name: Одноклассники — группа «Шахтёрск» (~30 тыс., есть доска объявлений)
+    url: https://ok.ru/group/51904898793661
+    variant: plain
+    note: аудитория 35+, как раз покупатели домов. Повторять раз в неделю
+
+  - id: dnr_red
+    platform: manual
+    name: ДНР РЕД — продажа домов
+    url: https://dnr.red/dnr/search/nedvizhimost/prodazha-nedvizhimosti/
+    variant: plain
+
+  - id: kupiprodai
+    platform: manual
+    name: КупиПродай ДНР
+    url: https://dnr.kupiprodai.ru/
+    variant: plain
+    note: в личном кабинете можно отметить сразу все доски ДНР — одна публикация, много площадок
+
+  - id: doski_ru
+    platform: manual
+    name: Доски.ру — дома и дачи в ДНР
+    url: https://donetskaya-narodnaya-respublika.doski.ru/cat-nedvizhimost/zhilaya/doma-dachi/prodam/
+    variant: plain
+
+  - id: domick
+    platform: manual
+    name: Domick — дома в ДНР
+    url: https://dnr.domick.ru/
+    variant: plain
+
+  - id: kopeechka
+    platform: manual
+    name: Копеечка — объявления ДНР/ЛНР
+    url: https://kopeechka.net/
+    variant: plain
+
+  - id: cian
+    platform: manual
+    name: Циан
+    url: https://www.cian.ru/razmestit-obyavlenie/
+    variant: plain
+    note: проверьте, принимает ли Циан объявления по ДНР от собственника и сколько стоит
+    enabled: false
+
+  - id: domclick
+    platform: manual
+    name: Домклик (Сбер)
+    url: https://domclick.ru/
+    variant: plain
+    note: даёт покупателей с ипотекой. Проверьте, доступен ли регион
+    enabled: false

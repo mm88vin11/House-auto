@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+_site/
+out/
+*.session
+.env
