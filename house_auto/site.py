@@ -43,7 +43,7 @@ h2{font-size:24px;margin:0 0 16px}
 .item h3{margin:0 0 4px;font-size:17px}.item p{margin:0;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}
 .chips li{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px}
 .gallery a{display:block;aspect-ratio:4/3;overflow:hidden;border-radius:10px;background:var(--line)}
 .gallery img{width:100%;height:100%;object-fit:cover;transition:transform .3s}.gallery a:hover img{transform:scale(1.04)}
 .empty{color:var(--muted);font-style:italic}
@@ -130,7 +130,8 @@ def site_html(h: dict, photo_names: list[str]) -> str:
 <div class="honest"><b>Честно:</b> {e(h['condition'])}</div>
 </section>
 
-<section><h2>Фотографии</h2><div class="gallery">{gallery}</div></section>
+<section><h2>Фотографии</h2><div class="gallery">{gallery}</div>
+{f'<p class="honest">📷 {e(h["more_photos"])}</p>' if h.get("more_photos") and photo_names else ""}</section>
 
 <section><h2>Коммуникации</h2><div class="grid2">
 {"".join(f'<div class="item"><h3>{e(u["icon"])} {e(u["name"])}</h3><p>{e(texts.cap(u["text"]))}</p></div>'

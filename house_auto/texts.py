@@ -27,13 +27,13 @@ def price_line(h: dict) -> str:
 
 def contact_lines(h: dict) -> list[str]:
     c = h["contact"]
-    lines = []
+    lines = [f"📷 {h['more_photos']}"] if h.get("more_photos") else []
     if c.get("phone"):
         lines.append(f"📞 {c['phone']}" + (f" — {c['name']}" if c.get("name") else ""))
     if c.get("telegram"):
         lines.append(f"✉️ {c['telegram']}")
     if h.get("site_url"):
-        lines.append(f"📸 Все фото и план: {h['site_url']}")
+        lines.append(f"🌐 Подробнее о доме: {h['site_url']}")
     return lines
 
 

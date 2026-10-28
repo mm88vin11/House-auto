@@ -80,6 +80,10 @@ class TelegramUserPoster:
         for attempt in (1, 2):
             try:
                 entity = self._entity(t.chat)
+                is_bot = getattr(entity, "bot", False)
+                if is_bot:   # бот-«предложка» канала: сначала /start, затем само объявление
+                    self.client.send_message(entity, "/start")
+                    time.sleep(3)
                 files = [str(p) for p in photos[:10]]
                 msgs = []
                 if files and len(text) <= CAPTION_LIMIT:
@@ -93,7 +97,8 @@ class TelegramUserPoster:
                 username = getattr(entity, "username", None)
                 last = msgs[0].id
                 return {"chat": t.chat, "message_ids": [m.id for m in msgs],
-                        "link": f"https://t.me/{username}/{last}" if username else ""}
+                        "link": f"https://t.me/{username}/{last}" if username and not is_bot
+                                else "отправлено админам на модерацию" if is_bot else ""}
             except errors.FloodWaitError as e:
                 if attempt == 1 and e.seconds <= MAX_FLOOD_WAIT:
                     time.sleep(e.seconds + 2)
