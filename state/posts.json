@@ -1,0 +1,19 @@
+{
+ "live": {},
+ "history": [
+  {
+   "target": "tg_shakhtersk_beseda",
+   "action": "post",
+   "status": "error",
+   "at": "2026-10-29T14:25:17+00:00",
+   "error": "нет TG_API_ID / TG_API_HASH / TG_SESSION — см. README, раздел Telegram"
+  },
+  {
+   "target": "vk_donetsk_market",
+   "action": "post",
+   "status": "error",
+   "at": "2026-10-29T14:25:17+00:00",
+   "error": "нет VK_TOKEN — см. README, раздел ВКонтакте"
+  }
+ ]
+}
