@@ -55,6 +55,10 @@ jobs:
           TG_OWNER_CHAT_ID: ${{ secrets.TG_OWNER_CHAT_ID }}
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
         run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ -z "$TG_SESSION$VK_TOKEN" ]; then
+            echo "Ключи не заданы в секретах — облачный автопилот пропущен (публикует приложение на компьютере)."
+            exit 0
+          fi
           ARGS=()
           if [ -n "$ONLY" ]; then ARGS+=(--only $ONLY); fi
           case "$MODE" in
