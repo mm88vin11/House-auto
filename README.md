@@ -14,7 +14,7 @@
 
 ## 📦 Приложение (самый простой путь)
 
-**[Скачать приложение →](../../releases/tag/app-latest)** — архив для Windows или Mac. Распакуйте, запустите
+**Скачать:** [для Windows](https://github.com/mm88vin11/House-auto/raw/app/HouseAuto-Windows.zip) · [для Mac](https://github.com/mm88vin11/House-auto/raw/app/HouseAuto-Mac.zip). Распакуйте, запустите
 `HouseAuto`, откроется окно в браузере: вход в Telegram прямо там (номер → код), кнопка
 «🚀 Опубликовать везде сейчас», автопилот, переключатели площадок, цена, сайт и тексты.
 Ключи хранятся только на вашем компьютере (папка `HouseAuto-data`), GitHub-секреты не нужны.

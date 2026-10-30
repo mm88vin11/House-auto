@@ -52,19 +52,22 @@ jobs:
           name: ${{ matrix.name }}
           path: ${{ matrix.name }}.zip
 
-  release:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist
-      - name: Выпуск «Скачать приложение»
+      - name: Выложить в ветку app (постоянные ссылки на скачивание)
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
         run: |
-          gh release delete app-latest --yes --cleanup-tag || true
-          gh release create app-latest dist/*/*.zip --target "${{ github.sha }}" \
-            --title "Приложение «Продажа дома»" \
-            --notes "Скачайте архив для своей системы, распакуйте и запустите HouseAuto. Инструкция — в файле КАК_ЗАПУСТИТЬ.txt внутри архива."
+          mkdir out && cp dist/*/*.zip out/
+          cd out
+          printf '# Скачать приложение «Продажа дома»\n\n- [Windows](HouseAuto-Windows.zip)\n- [Mac](HouseAuto-Mac.zip)\n\nСобрано из %s\n' "${{ github.sha }}" > README.md
+          git init -q -b app
+          git config user.name "house-auto"
+          git config user.email "house-auto@users.noreply.github.com"
+          git add -A && git commit -q -m "Сборка ${{ github.sha }}"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" app
