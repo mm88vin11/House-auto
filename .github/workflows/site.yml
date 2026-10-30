@@ -1,5 +1,8 @@
 name: "🌐 Сайт дома"
 
+# Сайт и пульт собираются в ветку `site` и открываются без входа:
+#   объявление — https://raw.githack.com/mm88vin11/House-auto/site/index.html
+#   пульт      — https://raw.githack.com/mm88vin11/House-auto/site/pult/index.html
 on:
   push:
     branches: [main]
@@ -7,20 +10,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: site
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,11 +27,13 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python -m house_auto site
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Выложить в ветку site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd _site
+          git init -q -b site
+          git config user.name "house-auto"
+          git config user.email "house-auto@users.noreply.github.com"
+          git add -A && git commit -q -m "Сайт из ${{ github.sha }}"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" site

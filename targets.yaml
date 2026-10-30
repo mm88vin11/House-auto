@@ -225,3 +225,281 @@ targets:
     url: https://t.me/a_adminnn
     variant: medium
     note: личный контакт админа — пишите сами, спросите условия размещения
+
+  # ═════════════ Добавлено 30.10.2026: соседние города, ОК, MAX, сайты (всё проверено) ═════════════
+  - id: tg_makeevka_nedv
+    platform: telegram
+    name: Недвижимость Макеевка — чат, 3 300
+    chat: "@nedvizhimost_best"
+    min_interval_days: 7
+
+  - id: tg_enakievo_nedv
+    platform: telegram
+    name: Недвижимость Енакиево — чат, 2 900
+    chat: "@nedvizhimostEnakievo"
+    min_interval_days: 7
+
+  - id: tg_enakievo_big
+    platform: telegram
+    name: Большой чат Енакиево — объявления, барахолка, 1 600
+    chat: "@venakievo"
+    min_interval_days: 7
+
+  - id: tg_makeevka_chat
+    platform: telegram
+    name: Типичная Макеевка — чат, 550
+    chat: "@typical_makeevka_chat"
+    min_interval_days: 10
+
+  - id: tg_gorlovka_chat
+    platform: telegram
+    name: New-Горловка — общий чат, 2 500
+    chat: "@gorlovka_chat"
+    min_interval_days: 10
+
+  - id: tg_torez_chat
+    platform: telegram
+    name: Торез (Донбасс) — открытый чат города
+    chat: "@torez"
+    min_interval_days: 7
+    note: соседний город, 10 км
+
+  - id: tg_khartsyzsk_ads
+    platform: telegram
+    name: Большой Харцызск — объявления
+    chat: "@kharcyzsk"
+    min_interval_days: 7
+
+  - id: tg_dokuchaevsk
+    platform: telegram
+    name: Барахолка Докучаевск, Волноваха, Еленовка — 3 500
+    chat: "@dokuchaevsk_info"
+    min_interval_days: 10
+
+  - id: tg_bot_typical_makeevka
+    platform: telegram
+    name: Типичная Макеевка — канал 38 000 (через предложку)
+    chat: "@typical_makeevka_news_bot"
+    delete_previous: false
+    min_interval_days: 14
+
+  - id: tg_bot_torg_don
+    platform: telegram
+    name: Куплю. Продам. Барахолка ДНР — канал 2 100 (через @DonTorgBot)
+    chat: "@DonTorgBot"
+    delete_previous: false
+    min_interval_days: 10
+
+  - id: tg_bot_mariupol_nedv
+    platform: telegram
+    name: Недвижимость Мариуполь — канал 23 700 (через @URM_21_bot)
+    chat: "@URM_21_bot"
+    delete_previous: false
+    min_interval_days: 14
+    note: Мариуполь далеко, но аудитория ищет жильё по всей ДНР
+
+  - id: vk_typical_makeevka
+    platform: vk
+    name: Типичная Макеевка — группа ВК
+    chat: typical_makeevka_official
+    variant: full
+    min_interval_days: 14
+
+  - id: vk_kharcizsk
+    platform: vk
+    name: Большой Харцызск — группа ВК
+    chat: kharcizskb
+    variant: full
+    min_interval_days: 10
+
+  - id: vk_mozaika
+    platform: vk
+    name: Горловка.Объявления — группа ВК
+    chat: mozaika
+    variant: full
+    min_interval_days: 10
+
+  - id: vk_gorlovka
+    platform: vk
+    name: Горловка.Сегодня — группа ВК
+    chat: gorlovka
+    variant: full
+    min_interval_days: 14
+
+  - id: ok_donetsk_217k
+    platform: manual
+    name: "⭐ ОК: ДОНЕЦК-ОБЪЯВЛЕНИЯ (ДНР) — 217 000 участников"
+    url: https://ok.ru/group/52633256591520
+    variant: plain
+    note: крупнейшая доска региона. Раз в неделю
+
+  - id: ok_makeevka_donetsk_28k
+    platform: manual
+    name: "ОК: Доска объявлений Макеевка-Донецк — 28 000"
+    url: https://ok.ru/group/52481789067331
+    variant: plain
+
+  - id: ok_enakievo_16k
+    platform: manual
+    name: "ОК: Объявления Енакиево — 15 900"
+    url: https://ok.ru/group/53472064045306
+    variant: plain
+
+  - id: ok_donetsk_makeevka_16k
+    platform: manual
+    name: "ОК: Донецк-Макеевка Новости Объявления — 15 800"
+    url: https://ok.ru/group/53077304082521
+    variant: plain
+
+  - id: ok_shakhtersk_torez_9k
+    platform: manual
+    name: "⭐ ОК: Объявления Шахтёрск, Торез, Снежное, Кировск — 9 300"
+    url: https://ok.ru/group/53052305703104
+    variant: plain
+    note: ваш район
+
+  - id: ok_donetsk_makeevka_7k
+    platform: manual
+    name: "ОК: Объявления Донецк Макеевка — 6 600"
+    url: https://ok.ru/group/54130800394439
+    variant: plain
+
+  - id: ok_baraholka_snezhnoe
+    platform: manual
+    name: "ОК: Барахолка Снежное Торез Шахтёрск — 2 800"
+    url: https://ok.ru/group/57661955440821
+    variant: plain
+
+  - id: ok_gorlovka_ads
+    platform: manual
+    name: "ОК: Горловка.Объявления — 2 600"
+    url: https://ok.ru/group/53517136953426
+    variant: plain
+
+  - id: ok_enakievo_nedv
+    platform: manual
+    name: "ОК: Недвижимость Енакиево — 1 100"
+    url: https://ok.ru/group/52752058941691
+    variant: plain
+
+  - id: ok_zhdanovka
+    platform: manual
+    name: "ОК: Ждановка, Енакиево, Кировское, Макеевка, Харцызск"
+    url: https://ok.ru/zhdanovkay
+    variant: plain
+
+  - id: ok_realbase
+    platform: manual
+    name: "ОК: Realbase — недвижимость Донецк"
+    url: https://ok.ru/group/realbase.estate
+    variant: plain
+
+  - id: max_shakhtersk
+    platform: manual
+    name: "MAX: Подслушано в Шахтёрске"
+    url: https://max.ru/shakhtersk
+    variant: medium
+    note: предложить пост админам
+
+  - id: max_baraholka_dnr
+    platform: manual
+    name: "MAX: Барахолка ДНР"
+    url: https://max.ru/donetsk_bu
+    variant: medium
+
+  - id: max_nedvijdon
+    platform: manual
+    name: "MAX: Недвижимость Донецк, Макеевка, Мариуполь"
+    url: https://max.ru/nedvijdon
+    variant: medium
+
+  - id: max_tip_enakievo
+    platform: manual
+    name: "MAX: Типичное Енакиево"
+    url: https://max.ru/tip_enakievo
+    variant: medium
+
+  - id: max_mozaika
+    platform: manual
+    name: "MAX: Горловка.Объявления"
+    url: https://max.ru/mozaika
+    variant: medium
+
+  - id: tg_gorlovka_ads_channel
+    platform: manual
+    name: "Telegram: Горловка.Объявления — канал 4 600"
+    url: https://t.me/mozaikatoday
+    variant: medium
+    note: напишите админу через профиль канала
+
+  - id: tg_bazaestate
+    platform: manual
+    name: "Telegram: Недвижимость Live — канал 39 000 (реклама через @bazaestate_bot)"
+    url: https://t.me/bazaestate_bot
+    variant: medium
+    note: скорее всего платно — спросите цену
+
+  - id: tg_gorlovka_news
+    platform: manual
+    name: "Telegram: Горловка.Сегодня — канал 18 400 (реклама)"
+    url: https://gorlovka.su
+    variant: plain
+    note: платная реклама — по желанию
+
+  - id: tg_dnronline
+    platform: manual
+    name: "Telegram: ДНР Онлайн — 12 900 (реклама)"
+    url: https://t.me/dnronlinebot
+    variant: medium
+    note: платная реклама — по желанию
+
+  - id: domclick_dnr
+    platform: manual
+    name: "⭐ Домклик — работает в ДНР (покупатели с ипотекой)"
+    url: https://doneck.domclick.ru/
+    variant: plain
+    note: одно объявление бесплатно для частного лица
+
+  - id: realbase
+    platform: manual
+    name: "Realbase — база недвижимости Донецка (бесплатно для собственников)"
+    url: https://realbase.estate/fast/add.php
+    variant: plain
+    note: ручная модерация
+
+  - id: youla_donetsk
+    platform: manual
+    name: "Юла — Донецк"
+    url: https://youla.ru/donetck
+    variant: plain
+
+  - id: moy_donetsk
+    platform: manual
+    name: "Мой Донецк — доска объявлений"
+    url: https://moy-donetsk.ru/
+    variant: plain
+    note: одно размещение бесплатно
+
+  - id: doska_donbassa
+    platform: manual
+    name: "Доска Донбасса"
+    url: https://doskadonbassa.ru/
+    variant: plain
+
+  - id: vkupiprodai_dnr
+    platform: manual
+    name: "ВКупиПродай ДНР"
+    url: https://dnr.vkupiprodai.ru/
+    variant: plain
+
+  - id: mozaika_biz
+    platform: manual
+    name: "Мозаика — объявления Горловки"
+    url: https://mozaika.biz/adv/
+    variant: plain
+
+  - id: leboard_torez
+    platform: manual
+    name: "Leboard — Торез"
+    url: https://leboard.ru/ua/torez
+    variant: plain

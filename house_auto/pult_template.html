@@ -84,7 +84,7 @@ details.t pre{white-space:pre-wrap;font:14px/1.5 var(--body);margin:10px 0}
     <div class="filters" role="group" aria-label="Фильтр">
       <button class="chip" data-f="due" aria-pressed="true">Пора</button>
       <button class="chip" data-f="all" aria-pressed="false">Все</button>
-      <button class="chip" data-f="tg" aria-pressed="false">Telegram</button>
+      <button class="chip" data-f="tg" aria-pressed="false">Telegram и MAX</button>
       <button class="chip" data-f="vk" aria-pressed="false">ВКонтакте</button>
       <button class="chip" data-f="site" aria-pressed="false">Сайты и ОК</button>
     </div>
@@ -107,7 +107,9 @@ const KIND = {
   bot:{label:"Канал через бота",grp:"tg",how:"Откройте бота, нажмите «Старт», отправьте 2 фото и текст. Админы опубликуют после проверки."},
   admin:{label:"Канал через админа",grp:"tg",how:"Напишите админу: «Здравствуйте, хочу разместить объявление о продаже дома», затем отправьте фото и текст."},
   vk:{label:"Группа ВКонтакте",grp:"vk",how:"Откройте группу → «Предложить новость» или пост на стене, прикрепите 2 фото, вставьте текст."},
-  site:{label:"Сайт / Одноклассники",grp:"site",how:"Откройте, войдите и создайте объявление «Продажа дома». Вставьте текст и 2 фото."}
+  max:{label:"Канал в MAX",grp:"tg",how:"Откройте канал в MAX и напишите админам: «Хочу разместить объявление о продаже дома», затем отправьте фото и текст."},
+  ok:{label:"Одноклассники",grp:"site",how:"Вступите в группу, нажмите «Написать заметку» или «Предложить тему», прикрепите 2 фото и вставьте текст."},
+  site:{label:"Сайт объявлений",grp:"site",how:"Откройте, войдите и создайте объявление «Продажа дома». Вставьте текст и 2 фото."}
 };
 const VARIANT_NAME={full:"Полный",medium:"Средний (подпись к фото в Telegram)",short:"Короткий",plain:"Без эмодзи (сайты, ОК)"};
 const DAY=864e5;

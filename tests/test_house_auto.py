@@ -132,7 +132,7 @@ class SiteTest(unittest.TestCase):
         html = site_html(h, [])
         self.assertIn("tel:+79995857940", html)
         self.assertIn("Фотографии скоро появятся", html)
-        html = site_html({**h, "site_url": "https://x.github.io/h/"}, ["01.jpg", "plan.jpg"])
+        html = site_html({**h, "site_url": "https://x.github.io/h/", "photo_base_url": None}, ["01.jpg", "plan.jpg"])
         self.assertIn('og:image" content="https://x.github.io/h/photos/01.jpg"', html)
         self.assertIn("photos/plan.jpg", html)
 

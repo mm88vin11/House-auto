@@ -85,6 +85,11 @@ def _contact_buttons(h: dict, alt: bool = False) -> str:
     return "".join(out)
 
 
+def photo_url(h: dict, name: str, rel: str = "photos/") -> str:
+    """Адрес фото: прямой (photo_base_url из house.yaml) или относительный."""
+    return (h.get("photo_base_url") or rel) + quote(name)
+
+
 def site_html(h: dict, photo_names: list[str]) -> str:
     cover = photo_names[0] if photo_names else None
     price = texts.price_line(h)
@@ -92,8 +97,9 @@ def site_html(h: dict, photo_names: list[str]) -> str:
     desc = (f"{texts.fmt_num(h['area_house'])} м², участок {texts.fmt_num(h['area_land'])} сот., "
             f"{h['land_category']}{', ЕГРН' if h.get('egrn') else ''}. {texts.cap(price)}.")
     base = (h.get("site_url") or "").rstrip("/") + "/"
-    og_img = f'<meta property="og:image" content="{e(base + "photos/" + cover)}">' if cover and h.get("site_url") else ""
-    hero_bg = f' style="background-image:url(\'photos/{e(quote(cover))}\')"' if cover else ""
+    og_src = photo_url(h, cover, base + "photos/") if cover else ""
+    og_img = f'<meta property="og:image" content="{e(og_src)}">' if og_src.startswith("http") else ""
+    hero_bg = f' style="background-image:url(\'{e(photo_url(h, cover))}\')"' if cover else ""
     maps = "https://yandex.ru/maps/?text=" + quote(f"{h['city']}, {h['street']}")
     c = h["contact"]
 
@@ -103,7 +109,7 @@ def site_html(h: dict, photo_names: list[str]) -> str:
              (h["land_category"], "категория земли"),
              ("ЕГРН" if h.get("egrn") else "—", "в российском реестре" if h.get("egrn") else "документы"),
              (h["walls"], "стены")]
-    gallery = ("".join(f'<a href="photos/{e(quote(n))}"><img src="photos/{e(quote(n))}" loading="lazy" '
+    gallery = ("".join(f'<a href="{e(photo_url(h, n))}"><img src="{e(photo_url(h, n))}" loading="lazy" '
                        f'alt="Фото {k + 1}"></a>' for k, n in enumerate(photo_names))
                or '<p class="empty">Фотографии скоро появятся — спросите в сообщениях, пришлём сразу.</p>')
     extra = ", ".join(h.get("extra_rooms", []))
@@ -170,7 +176,9 @@ def _pult_target(t) -> dict:
     """Площадка для пульта: куда ведёт кнопка «Открыть» и какую подсказку показать."""
     chat = str(t.chat)
     if t.platform == "manual":
-        url, kind = t.url, ("admin" if "t.me/" in t.url else "site")
+        url = t.url
+        kind = ("admin" if "t.me/" in url else "max" if "max.ru/" in url
+                else "ok" if "ok.ru/" in url else "site")
     elif t.platform == "vk":
         url, kind = "https://vk.com/" + chat, "vk"
     else:
@@ -206,7 +214,7 @@ def build_site(out: Path = ROOT / "_site") -> Path:
         shutil.copy2(p, out / "photos" / p.name)
     (out / "index.html").write_text(site_html(h, [p.name for p in photos]), encoding="utf-8")
     (out / "pult").mkdir()
-    (out / "pult" / "index.html").write_text(pult_html(h, ["../photos/" + p.name for p in photos]),
+    (out / "pult" / "index.html").write_text(pult_html(h, [photo_url(h, p.name, "../photos/") for p in photos]),
                                              encoding="utf-8")
     (out / ".nojekyll").write_text("")
     return out / "index.html"

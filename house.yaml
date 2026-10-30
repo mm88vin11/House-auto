@@ -71,7 +71,10 @@ contact:
 
 # Адрес сайта-визитки дома. После первой публикации на GitHub Pages
 # впишите сюда ссылку — она появится во всех объявлениях.
-site_url: null
+site_url: https://raw.githack.com/mm88vin11/House-auto/site/index.html
+
+# Откуда сайт берёт фото (githack не отдаёт картинки, поэтому — напрямую с GitHub).
+photo_base_url: https://raw.githubusercontent.com/mm88vin11/House-auto/site/photos/
 
 # Публикуем только фото с улицы; остальное — по запросу в личке.
 more_photos: Фото дома внутри, двора и сада — пришлю в личные сообщения.
