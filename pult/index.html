@@ -1,0 +1,221 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>Пульт продажи дома</title>
+<meta name="robots" content="noindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Пульт: одна колонка под телефон; сверху сводка и фото, ниже карточки площадок по срочности */
+:root{
+  --bg:#f3f1ec; --surface:#fffefb; --ink:#23201c; --muted:#6d665d; --line:#e2ddd3;
+  --gate:#7a3424; --gate-ink:#fff8f3; --leaf:#2f6a3c; --leaf-soft:#e3efe2; --due:#a8551b; --due-soft:#f8e9da;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif; --body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171513; --surface:#211e1b; --ink:#efe9e1; --muted:#a9a095; --line:#36312b;
+  --gate:#c46a52; --gate-ink:#1a0f0b; --leaf:#7cc28a; --leaf-soft:#1f3123; --due:#e39a5c; --due-soft:#3a2818; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171513; --surface:#211e1b; --ink:#efe9e1; --muted:#a9a095; --line:#36312b;
+  --gate:#c46a52; --gate-ink:#1a0f0b; --leaf:#7cc28a; --leaf-soft:#1f3123; --due:#e39a5c; --due-soft:#3a2818; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body)}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font:700 clamp(22px,6vw,30px)/1.15 var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:500 17px/1.3 var(--display);margin:0 0 10px;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.stat b{display:block;font:700 24px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.stat.due b{color:var(--due)}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.photos figure{margin:0;display:grid;gap:6px;min-width:0}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 0}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 14px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.list{display:grid;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px;min-width:0}
+.card.is-due{border-color:var(--due)}
+.top{display:grid;gap:6px;justify-items:start}
+.name{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.kind{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.status{font-size:13px;font-weight:600;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.status.new{background:var(--due-soft);color:var(--due)}
+.status.due{background:var(--due);color:var(--gate-ink)}
+.status.ok{background:var(--leaf-soft);color:var(--leaf)}
+.how{font-size:14px;color:var(--muted);margin:0}
+.note{font-size:13px;color:var(--muted);margin:0;font-style:italic}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:600 15px var(--body);border-radius:10px;padding:10px 14px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:var(--gate);border-color:var(--gate);color:var(--gate-ink)}
+.btn.done{background:var(--leaf);border-color:var(--leaf);color:var(--surface)}
+.btn:focus-visible,.chip:focus-visible{outline:2px solid var(--gate);outline-offset:2px}
+.texts{display:grid;gap:10px}
+details.t{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+details.t summary{cursor:pointer;font-weight:600}
+details.t pre{white-space:pre-wrap;font:14px/1.5 var(--body);margin:10px 0}
+.foot{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;z-index:20}
+@media (max-width:420px){.summary{grid-template-columns:repeat(3,minmax(0,1fr))}.stat b{font-size:20px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s}}
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>Пульт продажи дома</h1>
+    <p class="sub">Капустина, Шахтёрск · 68 площадок · отметки «опубликовал» сохраняются в этом браузере</p>
+  </header>
+
+  <section class="summary" aria-label="Сводка">
+    <div class="stat"><b id="sDone">0</b><span>опубликовано</span></div>
+    <div class="stat due"><b id="sDue">68</b><span>пора сейчас</span></div>
+    <div class="stat"><b id="sWait">0</b><span>ждут срока</span></div>
+  </section>
+
+  <section>
+    <h2>Фото для объявления</h2>
+    <div class="photos" id="photos"></div>
+    <p class="hint">Сохраните оба фото на телефон один раз: кнопкой или долгим нажатием на фото. Остальные фото — только в личке, как вы решили.</p>
+  </section>
+
+  <section>
+    <h2>Куда публиковать</h2>
+    <div class="filters" role="group" aria-label="Фильтр">
+      <button class="chip" data-f="due" aria-pressed="true">Пора</button>
+      <button class="chip" data-f="all" aria-pressed="false">Все</button>
+      <button class="chip" data-f="tg" aria-pressed="false">Telegram и MAX</button>
+      <button class="chip" data-f="vk" aria-pressed="false">ВКонтакте</button>
+      <button class="chip" data-f="site" aria-pressed="false">Сайты и ОК</button>
+    </div>
+    <div class="list" id="list" style="margin-top:12px"></div>
+  </section>
+
+  <section>
+    <h2>Тексты объявления</h2>
+    <div class="texts" id="texts"></div>
+  </section>
+
+  <p class="foot">Полностью автоматическая рассылка в чужие чаты возможна только от вашего аккаунта Telegram, а вход в него подтверждается кодом на ваш телефон. Для этого есть программа HouseAuto для компьютера. Здесь каждая площадка занимает около 20 секунд: скопировать, открыть, вставить, отметить.</p>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA = {"photos": ["https://raw.githubusercontent.com/mm88vin11/House-auto/site/photos/01.jpg", "https://raw.githubusercontent.com/mm88vin11/House-auto/site/photos/02.jpg"], "texts": {"full": "🏡 Продаётся дом на Капустина, Шахтёрск — крепкий, с хорошей землёй и настоящим потенциалом\n\n💰 Цена — в личных сообщениях\n📐 86,5 м² • участок 9,1 сот. • 1978 г. (дерево + глина)\nПланировка: 4 жилых комнаты + 5 общих. Есть веранда и кладовая — места хватит с запасом.\n\n🎨 Дом требует ремонта — говорим сразу и честно. Но за этим стоит нормальная цена и возможность сделать всё под себя, а не переплачивать за чужой вкус.\n\nКоммуникации:\n💧 Вода: водопровода нет — как и по всему городу, увы. Но на участке есть разведанная жила под скважину, плюс накопительный бак на 3 тонны уже стоит и готов к работе.\n🔥 Отопление: водяное от печки, обогревает весь дом, а не одну комнату. Сделано качественно и по совести.\n🟦 Газ: проходит прямо по улице, подключение реальное и несложное.\n🚽 Септик: уже есть, хороший.\n\n📍 Локация: улица Капустина. Тихий район, асфальтированная дорога, рядом школа и магазины — с логистикой всё в порядке.\n\n🌳 На участке:\nХозяйство под ключ: времянка, пристроенный сарай, гараж под мотоцикл, угольник, сарай для дров, новый туалет, летний душ.\nСад — полноценный: два ореха, черешня, вишни, айва, малина, смородина, яблони, сливы. Урожай каждый год без всяких усилий.\nСоседи спокойные и доброжелательные.\n\n📄 Документы в порядке: дом внесён в российский реестр (ЕГРН), земля — ИЖС, достраиваться и расширяться можно свободно.\n\n🔥 Дом с реальным потенциалом — не витрина, а хорошая база для тех, кто готов вложить немного труда и получить взамен просторный участок, сад и крепкие стены.\n\nПодробности и просмотр — в личные сообщения или по телефону:\n📷 Фото дома внутри, двора и сада — пришлю в личные сообщения.\n📞 +7 999 585 79 40\n🌐 Подробнее о доме: https://raw.githack.com/mm88vin11/House-auto/site/index.html\n\n#Шахтёрск #продамдом #домШахтёрск #недвижимостьДНР #ДНР #домсучастком", "medium": "🏡 Продаётся дом, Шахтёрск, улица Капустина\n\n💰 Цена — в личных сообщениях\n📐 86,5 м² • участок 9,1 сот. • 1978 г. (дерево + глина)\n🏠 4 жилых комнаты + 5 общих, веранда, кладовая\n🔧 Требует ремонта — отсюда честная цена.\n⚙️ Вода — жила под скважину + бак на 3 т; отопление — водяное от печки на весь дом; газ — по улице, подключение несложное; септик — есть.\n🌳 Сад: два ореха, черешня, вишни, айва, малина, смородина, яблони, сливы.\n🏚 Постройки: времянка, пристроенный сарай, гараж под мотоцикл, угольник, сарай для дров, новый туалет, летний душ.\n📄 ЕГРН, ИЖС. Тихий район, асфальт, рядом школа и магазины.\n\n📷 Фото дома внутри, двора и сада — пришлю в личные сообщения.\n📞 +7 999 585 79 40\n🌐 Подробнее о доме: https://raw.githack.com/mm88vin11/House-auto/site/index.html\n#Шахтёрск #продамдом #домШахтёрск #недвижимостьДНР #ДНР #домсучастком", "short": "🏡 Продам дом, Шахтёрск, улица Капустина\n86,5 м² • участок 9,1 сот. • 1978 г. (дерево + глина)\n4 жилых комнаты + 5 общих. Вода — жила под скважину + бак на 3 т; отопление — водяное от печки на весь дом; газ — по улице, подключение несложное; септик — есть. Сад, постройки. ЕГРН, ИЖС. Требует ремонта.\n💰 Цена — в личных сообщениях\n📷 Фото дома внутри, двора и сада — пришлю в личные сообщения.\n📞 +7 999 585 79 40\n🌐 Подробнее о доме: https://raw.githack.com/mm88vin11/House-auto/site/index.html", "plain": "Продаётся дом на Капустина, Шахтёрск — крепкий, с хорошей землёй и настоящим потенциалом\n\nЦена — в личных сообщениях\n86,5 м² • участок 9,1 сот. • 1978 г. (дерево + глина)\nПланировка: 4 жилых комнаты + 5 общих. Есть веранда и кладовая — места хватит с запасом.\n\nДом требует ремонта — говорим сразу и честно. Но за этим стоит нормальная цена и возможность сделать всё под себя, а не переплачивать за чужой вкус.\n\nКоммуникации:\nВода: водопровода нет — как и по всему городу, увы. Но на участке есть разведанная жила под скважину, плюс накопительный бак на 3 тонны уже стоит и готов к работе.\nОтопление: водяное от печки, обогревает весь дом, а не одну комнату. Сделано качественно и по совести.\nГаз: проходит прямо по улице, подключение реальное и несложное.\nСептик: уже есть, хороший.\n\nЛокация: улица Капустина. Тихий район, асфальтированная дорога, рядом школа и магазины — с логистикой всё в порядке.\n\nНа участке:\nХозяйство под ключ: времянка, пристроенный сарай, гараж под мотоцикл, угольник, сарай для дров, новый туалет, летний душ.\nСад — полноценный: два ореха, черешня, вишни, айва, малина, смородина, яблони, сливы. Урожай каждый год без всяких усилий.\nСоседи спокойные и доброжелательные.\n\nДокументы в порядке: дом внесён в российский реестр (ЕГРН), земля — ИЖС, достраиваться и расширяться можно свободно.\n\nДом с реальным потенциалом — не витрина, а хорошая база для тех, кто готов вложить немного труда и получить взамен просторный участок, сад и крепкие стены.\n\nПодробности и просмотр — в личные сообщения или по телефону:\nФото дома внутри, двора и сада — пришлю в личные сообщения.\n+7 999 585 79 40\nПодробнее о доме: https://raw.githack.com/mm88vin11/House-auto/site/index.html"}, "targets": [{"id": "tg_shakhtersk_beseda", "name": "ШАХТЁРСК (беседа) — 2 000 участников", "kind": "chat", "url": "https://t.me/+iqFDC02DL7Q5YzRi", "variant": "medium", "every": 7, "note": "главный чат города, привязан к «Подслушано в Шахтёрске»"}, {"id": "tg_shahtersk", "name": "Шахтёрск (Донбасс) — чат канала «Новости Шахтёрска»", "kind": "chat", "url": "https://t.me/shahtersk", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_donetsk_market_chat", "name": "Объявления Донецк | Барахолка ДНР — чат, 3 000", "kind": "chat", "url": "https://t.me/blackmarket_chat", "variant": "medium", "every": 3, "note": ""}, {"id": "tg_enakievo_chat", "name": "Типичное Енакиево — обсуждение, 2 900", "kind": "chat", "url": "https://t.me/+pby_hD3aKLAwNWUy", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_khartsyzsk_chat", "name": "Чат города Харцызска — 8 400", "kind": "chat", "url": "https://t.me/khartsyz_chat", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_snezhnoe_chat", "name": "Чат города Снежное", "kind": "chat", "url": "https://t.me/+HRKW6b_jIEs5MTBi", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_bot_baraholka_dnr", "name": "Барахолка ДНР — канал 37 000 (через @donetskbu_add_bot)", "kind": "bot", "url": "https://t.me/donetskbu_add_bot", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_bot_market_donetsk", "name": "Объявления Донецк — канал 2 900 (через @blackmarketdn_bot)", "kind": "bot", "url": "https://t.me/blackmarketdn_bot", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_bot_podslushano_shakhtersk", "name": "Подслушано в Шахтёрске — канал 4 200 (через @Shakhtersk_bot)", "kind": "bot", "url": "https://t.me/Shakhtersk_bot", "variant": "medium", "every": 14, "note": ""}, {"id": "tg_bot_tip_enakievo", "name": "Типичное Енакиево — канал 30 600 (через @Tip_enakievo_Bot)", "kind": "bot", "url": "https://t.me/Tip_enakievo_Bot", "variant": "medium", "every": 14, "note": "могут ответить, что реклама платная — тогда см. telega.in/c/tip_enakievo"}, {"id": "tg_bot_podslushano_khartsyzsk", "name": "Подслушано в Большом Харцызске — канал 9 500 (через предложку)", "kind": "bot", "url": "https://t.me/khartsyzsk_podslushano_bot", "variant": "medium", "every": 14, "note": ""}, {"id": "tg_bot_snezhnoe", "name": "СНЕЖНОЕ — канал (через @Snezhnoe_ru_bot)", "kind": "bot", "url": "https://t.me/Snezhnoe_ru_bot", "variant": "medium", "every": 14, "note": ""}, {"id": "vk_donetsk_market", "name": "Объявления Донецк — группа ВК", "kind": "vk", "url": "https://vk.com/donetsk_market", "variant": "full", "every": 7, "note": ""}, {"id": "vk_typical_enakievo", "name": "Типичное Енакиево — группа ВК", "kind": "vk", "url": "https://vk.com/typical_enakievo", "variant": "full", "every": 14, "note": ""}, {"id": "ok_shakhtersk_board", "name": "⭐ ОК: Доска объявлений г. Шахтёрск ДНР — 37 000 участников", "kind": "ok", "url": "https://ok.ru/group/51904898793661", "variant": "plain", "every": 7, "note": "самая большая аудитория города. Объявления бесплатно в ленте. Повторять раз в неделю"}, {"id": "ok_torez_shakhtersk_snezhnoe", "name": "ОК: Торез, Шахтёрск, Снежное — доска объявлений", "kind": "ok", "url": "https://ok.ru/group/56435046023287", "variant": "plain", "every": 7, "note": "без ссылок в тексте — иначе удаляют"}, {"id": "ok_snezhnoe_torez", "name": "ОК: Снежное-Торез объявления", "kind": "ok", "url": "https://ok.ru/group/60801451556918", "variant": "plain", "every": 7, "note": ""}, {"id": "dnr_red", "name": "⭐ ДНР РЕД — Шахтёрск, продажа недвижимости", "kind": "site", "url": "https://dnr.red/shahterskk/search/nedvizhimost/prodazha-nedvizhimosti/", "variant": "plain", "every": 7, "note": "объявления с сайта сами уходят в их Telegram-канал @dnr_red_nedvizhimost (6 400)"}, {"id": "kupiprodai", "name": "КупиПродай ДНР", "kind": "site", "url": "https://dnr.kupiprodai.ru/", "variant": "plain", "every": 7, "note": "в кабинете отметьте сразу все доски ДНР"}, {"id": "baraholkadnr", "name": "Барахолка ДНР (сайт)", "kind": "site", "url": "https://baraholkadnr.ru/", "variant": "plain", "every": 7, "note": ""}, {"id": "doski_ru", "name": "Доски.ру — дома и дачи в ДНР", "kind": "site", "url": "https://donetskaya-narodnaya-respublika.doski.ru/cat-nedvizhimost/zhilaya/doma-dachi/prodam/", "variant": "plain", "every": 7, "note": ""}, {"id": "domick", "name": "Domick — дома в ДНР", "kind": "site", "url": "https://dnr.domick.ru/", "variant": "plain", "every": 7, "note": ""}, {"id": "kopeechka", "name": "Копеечка — объявления ДНР/ЛНР", "kind": "site", "url": "https://kopeechka.net/", "variant": "plain", "every": 7, "note": ""}, {"id": "tg_nedvijdon", "name": "Канал «Недвижимость Донецк, Макеевка» — 14 000: написать @Alexander19928", "kind": "admin", "url": "https://t.me/Alexander19928", "variant": "medium", "every": 7, "note": "личный контакт админа — пишите сами, спросите условия размещения"}, {"id": "tg_nedvizhimost_donetsk", "name": "Канал «Недвижимость Донецк ДНР» — 16 000: написать @a_adminnn", "kind": "admin", "url": "https://t.me/a_adminnn", "variant": "medium", "every": 7, "note": "личный контакт админа — пишите сами, спросите условия размещения"}, {"id": "tg_makeevka_nedv", "name": "Недвижимость Макеевка — чат, 3 300", "kind": "chat", "url": "https://t.me/nedvizhimost_best", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_enakievo_nedv", "name": "Недвижимость Енакиево — чат, 2 900", "kind": "chat", "url": "https://t.me/nedvizhimostEnakievo", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_enakievo_big", "name": "Большой чат Енакиево — объявления, барахолка, 1 600", "kind": "chat", "url": "https://t.me/venakievo", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_makeevka_chat", "name": "Типичная Макеевка — чат, 550", "kind": "chat", "url": "https://t.me/typical_makeevka_chat", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_gorlovka_chat", "name": "New-Горловка — общий чат, 2 500", "kind": "chat", "url": "https://t.me/gorlovka_chat", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_torez_chat", "name": "Торез (Донбасс) — открытый чат города", "kind": "chat", "url": "https://t.me/torez", "variant": "medium", "every": 7, "note": "соседний город, 10 км"}, {"id": "tg_khartsyzsk_ads", "name": "Большой Харцызск — объявления", "kind": "chat", "url": "https://t.me/kharcyzsk", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_dokuchaevsk", "name": "Барахолка Докучаевск, Волноваха, Еленовка — 3 500", "kind": "chat", "url": "https://t.me/dokuchaevsk_info", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_bot_typical_makeevka", "name": "Типичная Макеевка — канал 38 000 (через предложку)", "kind": "bot", "url": "https://t.me/typical_makeevka_news_bot", "variant": "medium", "every": 14, "note": ""}, {"id": "tg_bot_torg_don", "name": "Куплю. Продам. Барахолка ДНР — канал 2 100 (через @DonTorgBot)", "kind": "bot", "url": "https://t.me/DonTorgBot", "variant": "medium", "every": 10, "note": ""}, {"id": "tg_bot_mariupol_nedv", "name": "Недвижимость Мариуполь — канал 23 700 (через @URM_21_bot)", "kind": "bot", "url": "https://t.me/URM_21_bot", "variant": "medium", "every": 14, "note": "Мариуполь далеко, но аудитория ищет жильё по всей ДНР"}, {"id": "vk_typical_makeevka", "name": "Типичная Макеевка — группа ВК", "kind": "vk", "url": "https://vk.com/typical_makeevka_official", "variant": "full", "every": 14, "note": ""}, {"id": "vk_kharcizsk", "name": "Большой Харцызск — группа ВК", "kind": "vk", "url": "https://vk.com/kharcizskb", "variant": "full", "every": 10, "note": ""}, {"id": "vk_mozaika", "name": "Горловка.Объявления — группа ВК", "kind": "vk", "url": "https://vk.com/mozaika", "variant": "full", "every": 10, "note": ""}, {"id": "vk_gorlovka", "name": "Горловка.Сегодня — группа ВК", "kind": "vk", "url": "https://vk.com/gorlovka", "variant": "full", "every": 14, "note": ""}, {"id": "ok_donetsk_217k", "name": "⭐ ОК: ДОНЕЦК-ОБЪЯВЛЕНИЯ (ДНР) — 217 000 участников", "kind": "ok", "url": "https://ok.ru/group/52633256591520", "variant": "plain", "every": 7, "note": "крупнейшая доска региона. Раз в неделю"}, {"id": "ok_makeevka_donetsk_28k", "name": "ОК: Доска объявлений Макеевка-Донецк — 28 000", "kind": "ok", "url": "https://ok.ru/group/52481789067331", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_enakievo_16k", "name": "ОК: Объявления Енакиево — 15 900", "kind": "ok", "url": "https://ok.ru/group/53472064045306", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_donetsk_makeevka_16k", "name": "ОК: Донецк-Макеевка Новости Объявления — 15 800", "kind": "ok", "url": "https://ok.ru/group/53077304082521", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_shakhtersk_torez_9k", "name": "⭐ ОК: Объявления Шахтёрск, Торез, Снежное, Кировск — 9 300", "kind": "ok", "url": "https://ok.ru/group/53052305703104", "variant": "plain", "every": 7, "note": "ваш район"}, {"id": "ok_donetsk_makeevka_7k", "name": "ОК: Объявления Донецк Макеевка — 6 600", "kind": "ok", "url": "https://ok.ru/group/54130800394439", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_baraholka_snezhnoe", "name": "ОК: Барахолка Снежное Торез Шахтёрск — 2 800", "kind": "ok", "url": "https://ok.ru/group/57661955440821", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_gorlovka_ads", "name": "ОК: Горловка.Объявления — 2 600", "kind": "ok", "url": "https://ok.ru/group/53517136953426", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_enakievo_nedv", "name": "ОК: Недвижимость Енакиево — 1 100", "kind": "ok", "url": "https://ok.ru/group/52752058941691", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_zhdanovka", "name": "ОК: Ждановка, Енакиево, Кировское, Макеевка, Харцызск", "kind": "ok", "url": "https://ok.ru/zhdanovkay", "variant": "plain", "every": 7, "note": ""}, {"id": "ok_realbase", "name": "ОК: Realbase — недвижимость Донецк", "kind": "ok", "url": "https://ok.ru/group/realbase.estate", "variant": "plain", "every": 7, "note": ""}, {"id": "max_shakhtersk", "name": "MAX: Подслушано в Шахтёрске", "kind": "max", "url": "https://max.ru/shakhtersk", "variant": "medium", "every": 7, "note": "предложить пост админам"}, {"id": "max_baraholka_dnr", "name": "MAX: Барахолка ДНР", "kind": "max", "url": "https://max.ru/donetsk_bu", "variant": "medium", "every": 7, "note": ""}, {"id": "max_nedvijdon", "name": "MAX: Недвижимость Донецк, Макеевка, Мариуполь", "kind": "max", "url": "https://max.ru/nedvijdon", "variant": "medium", "every": 7, "note": ""}, {"id": "max_tip_enakievo", "name": "MAX: Типичное Енакиево", "kind": "max", "url": "https://max.ru/tip_enakievo", "variant": "medium", "every": 7, "note": ""}, {"id": "max_mozaika", "name": "MAX: Горловка.Объявления", "kind": "max", "url": "https://max.ru/mozaika", "variant": "medium", "every": 7, "note": ""}, {"id": "tg_gorlovka_ads_channel", "name": "Telegram: Горловка.Объявления — канал 4 600", "kind": "admin", "url": "https://t.me/mozaikatoday", "variant": "medium", "every": 7, "note": "напишите админу через профиль канала"}, {"id": "tg_bazaestate", "name": "Telegram: Недвижимость Live — канал 39 000 (реклама через @bazaestate_bot)", "kind": "admin", "url": "https://t.me/bazaestate_bot", "variant": "medium", "every": 7, "note": "скорее всего платно — спросите цену"}, {"id": "tg_gorlovka_news", "name": "Telegram: Горловка.Сегодня — канал 18 400 (реклама)", "kind": "site", "url": "https://gorlovka.su", "variant": "plain", "every": 7, "note": "платная реклама — по желанию"}, {"id": "tg_dnronline", "name": "Telegram: ДНР Онлайн — 12 900 (реклама)", "kind": "admin", "url": "https://t.me/dnronlinebot", "variant": "medium", "every": 7, "note": "платная реклама — по желанию"}, {"id": "domclick_dnr", "name": "⭐ Домклик — работает в ДНР (покупатели с ипотекой)", "kind": "site", "url": "https://doneck.domclick.ru/", "variant": "plain", "every": 7, "note": "одно объявление бесплатно для частного лица"}, {"id": "realbase", "name": "Realbase — база недвижимости Донецка (бесплатно для собственников)", "kind": "site", "url": "https://realbase.estate/fast/add.php", "variant": "plain", "every": 7, "note": "ручная модерация"}, {"id": "youla_donetsk", "name": "Юла — Донецк", "kind": "site", "url": "https://youla.ru/donetck", "variant": "plain", "every": 7, "note": ""}, {"id": "moy_donetsk", "name": "Мой Донецк — доска объявлений", "kind": "site", "url": "https://moy-donetsk.ru/", "variant": "plain", "every": 7, "note": "одно размещение бесплатно"}, {"id": "doska_donbassa", "name": "Доска Донбасса", "kind": "site", "url": "https://doskadonbassa.ru/", "variant": "plain", "every": 7, "note": ""}, {"id": "vkupiprodai_dnr", "name": "ВКупиПродай ДНР", "kind": "site", "url": "https://dnr.vkupiprodai.ru/", "variant": "plain", "every": 7, "note": ""}, {"id": "mozaika_biz", "name": "Мозаика — объявления Горловки", "kind": "site", "url": "https://mozaika.biz/adv/", "variant": "plain", "every": 7, "note": ""}, {"id": "leboard_torez", "name": "Leboard — Торез", "kind": "site", "url": "https://leboard.ru/ua/torez", "variant": "plain", "every": 7, "note": ""}], "phone": "+7 999 585 79 40"};
+const KIND = {
+  chat:{label:"Telegram-чат",grp:"tg",how:"Откройте чат, прикрепите 2 фото и вставьте текст. Вступите в чат, если попросит."},
+  bot:{label:"Канал через бота",grp:"tg",how:"Откройте бота, нажмите «Старт», отправьте 2 фото и текст. Админы опубликуют после проверки."},
+  admin:{label:"Канал через админа",grp:"tg",how:"Напишите админу: «Здравствуйте, хочу разместить объявление о продаже дома», затем отправьте фото и текст."},
+  vk:{label:"Группа ВКонтакте",grp:"vk",how:"Откройте группу → «Предложить новость» или пост на стене, прикрепите 2 фото, вставьте текст."},
+  max:{label:"Канал в MAX",grp:"tg",how:"Откройте канал в MAX и напишите админам: «Хочу разместить объявление о продаже дома», затем отправьте фото и текст."},
+  ok:{label:"Одноклассники",grp:"site",how:"Вступите в группу, нажмите «Написать заметку» или «Предложить тему», прикрепите 2 фото и вставьте текст."},
+  site:{label:"Сайт объявлений",grp:"site",how:"Откройте, войдите и создайте объявление «Продажа дома». Вставьте текст и 2 фото."}
+};
+const VARIANT_NAME={full:"Полный",medium:"Средний (подпись к фото в Telegram)",short:"Короткий",plain:"Без эмодзи (сайты, ОК)"};
+const DAY=864e5;
+let posts={}, filter="due", db=null;
+
+const $=id=>document.getElementById(id);
+function toast(msg){const t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
+
+async function copy(text){
+  try{await navigator.clipboard.writeText(text);toast("Текст скопирован");return}catch(e){}
+  const ta=document.createElement("textarea");ta.value=text;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();
+  toast(ok?"Текст скопирован":"Выделите текст в разделе «Тексты» и скопируйте вручную");
+}
+
+function state(t){
+  const p=posts[t.id];
+  if(!p||!p.at) return {cls:"new",label:"Не опубликовано",due:true,next:0};
+  const at=new Date(p.at).getTime(), next=at+t.every*DAY, now=Date.now();
+  if(now>=next) return {cls:"due",label:"Пора повторить",due:true,next};
+  const days=Math.max(1,Math.ceil((next-now)/DAY));
+  return {cls:"ok",label:`Готово · снова через ${days} дн.`,due:false,next};
+}
+
+function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}
+
+function render(){
+  const items=DATA.targets.map(t=>({t,s:state(t)}));
+  $("sDone").textContent=items.filter(x=>posts[x.t.id]).length;
+  $("sDue").textContent=items.filter(x=>x.s.due).length;
+  $("sWait").textContent=items.filter(x=>!x.s.due).length;
+  const shown=items.filter(({t,s})=>filter==="all"||(filter==="due"?s.due:KIND[t.kind].grp===filter))
+    .sort((a,b)=>(b.s.due-a.s.due)||(a.s.next-b.s.next));
+  const list=$("list");list.textContent="";
+  if(!shown.length){const p=document.createElement("p");p.className="how";p.textContent="Сейчас здесь всё сделано. Загляните позже: пульт сам покажет, где пора повторить.";list.appendChild(p);return}
+  for(const {t,s} of shown){
+    const k=KIND[t.kind], c=document.createElement("article");
+    c.className="card"+(s.due?" is-due":"");
+    c.innerHTML=`<div class="top"><div style="min-width:0"><div class="kind"></div><div class="name"></div></div><span class="status ${s.cls}"></span></div>
+      <p class="how"></p>${t.note?'<p class="note"></p>':""}
+      <div class="btns"><button class="btn primary" data-a="copy">Скопировать текст</button><a class="btn" target="_blank" rel="noopener">Открыть ↗</a><button class="btn" data-a="done"></button></div>`;
+    c.querySelector(".kind").textContent=k.label+" · раз в "+t.every+" дн.";
+    c.querySelector(".name").textContent=t.name;
+    c.querySelector(".status").textContent=s.label;
+    c.querySelector(".how").textContent=k.how;
+    if(t.note)c.querySelector(".note").textContent=t.note;
+    c.querySelector("a").href=t.url;
+    const done=c.querySelector('[data-a="done"]');
+    done.textContent=posts[t.id]?"✓ "+fmtDate(posts[t.id].at)+" · обновить":"✓ Опубликовал";
+    if(posts[t.id]&&!s.due)done.classList.add("done");
+    c.querySelector('[data-a="copy"]').onclick=()=>copy(DATA.texts[t.variant]);
+    done.onclick=()=>markDone(t);
+    list.appendChild(c);
+  }
+}
+
+async function markDone(t){
+  const rec={at:new Date().toISOString(),count:((posts[t.id]||{}).count||0)+1};
+  posts[t.id]=rec;render();toast("Отмечено: "+t.name);
+  if(db){try{await db.collection("posts").doc(t.id).set(rec)}catch(e){toast("Не сохранилось в облаке — отметка останется на этом устройстве")}}
+  saveLocal();
+}
+function saveLocal(){try{localStorage.setItem("posts",JSON.stringify(posts))}catch(e){}}
+function loadLocal(){try{posts=JSON.parse(localStorage.getItem("posts")||"{}")||{}}catch(e){posts={}}}
+
+function b64ToBlob(uri){const [head,b64]=uri.split(",");const bin=atob(b64);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:head.slice(5).split(";")[0]})}
+
+function renderPhotos(downloads){
+  const box=$("photos");box.textContent="";
+  DATA.photos.forEach((src,i)=>{
+    const f=document.createElement("figure");const img=document.createElement("img");
+    img.src=src;img.alt=i?"Дом и забор вдоль улицы":"Дом на Капустина с улицы, ворота";f.appendChild(img);
+    if(downloads){const b=document.createElement("button");b.className="btn";b.textContent="Сохранить фото "+(i+1);
+      b.onclick=async()=>{try{await downloads.save({filename:`dom-kapustina-${i+1}.jpg`,data:b64ToBlob(src)});toast("Фото сохранено")}catch(e){if(e&&e.code!=="declined")toast("Сохраните долгим нажатием на фото")}};
+      f.appendChild(b)}
+    box.appendChild(f);
+  });
+}
+
+function renderTexts(){
+  const box=$("texts");
+  for(const [k,v] of Object.entries(DATA.texts)){
+    const d=document.createElement("details");d.className="t";
+    d.innerHTML=`<summary></summary><pre></pre><button class="btn primary">Скопировать</button>`;
+    d.querySelector("summary").textContent=VARIANT_NAME[k]+" · "+v.length+" символов";
+    d.querySelector("pre").textContent=v;d.querySelector("button").onclick=()=>copy(v);
+    box.appendChild(d);
+  }
+}
+
+document.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{
+  filter=ch.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===ch)));render();
+});
+
+loadLocal();renderPhotos(null);renderTexts();render();
+
+(async()=>{
+  if(!window.claude||!window.claude.use)return;
+  claude.use("downloads").then(d=>{if(d)renderPhotos(d)}).catch(()=>{});
+  try{db=await claude.use("db")}catch(e){db=null}
+  if(!db)return;
+  db.collection("posts").onSnapshot(snap=>{
+    const remote={};snap.docs.forEach(d=>{const v=d.data();if(v)remote[d.id]=v});
+    for(const [id,v] of Object.entries(posts)){if(!remote[id]||remote[id].at<v.at){remote[id]=v;db.collection("posts").doc(id).set(v).catch(()=>{})}}
+    posts=remote;saveLocal();render();
+  },()=>{});
+})();
+</script>
+</body></html>
