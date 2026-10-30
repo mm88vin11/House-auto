@@ -38,6 +38,7 @@ jobs:
             --add-data "house.yaml${SEP}defaults" \
             --add-data "targets.yaml${SEP}defaults" \
             --add-data "photos${SEP}defaults/photos" \
+            --add-data "house_auto/pult_template.html${SEP}house_auto" \
             --hidden-import house_auto.posters.telegram_user \
             --hidden-import house_auto.posters.telegram_bot \
             --hidden-import house_auto.posters.vk \

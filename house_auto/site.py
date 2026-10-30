@@ -166,6 +166,36 @@ def site_html(h: dict, photo_names: list[str]) -> str:
 """
 
 
+def _pult_target(t) -> dict:
+    """Площадка для пульта: куда ведёт кнопка «Открыть» и какую подсказку показать."""
+    chat = str(t.chat)
+    if t.platform == "manual":
+        url, kind = t.url, ("admin" if "t.me/" in t.url else "site")
+    elif t.platform == "vk":
+        url, kind = "https://vk.com/" + chat, "vk"
+    else:
+        url = chat if chat.startswith("http") else "https://t.me/" + chat.lstrip("@")
+        kind = "bot" if chat.lower().endswith("bot") else "chat"
+    every = t.min_interval_days if t.platform != "manual" else 7
+    return {"id": t.id, "name": t.name or t.id, "kind": kind, "url": url, "variant": t.variant,
+            "every": every, "note": t.note}
+
+
+def pult_html(h: dict, photo_urls: list[str]) -> str:
+    """Пульт ручной публикации: копировать текст → открыть площадку → отметить. Работает без входа."""
+    import json
+    targets, _ = load_targets()
+    items = [_pult_target(t) for t in targets if t.enabled and t.platform in ("telegram", "vk", "manual")]
+    data = {"photos": photo_urls, "texts": texts.render_all(h), "targets": items,
+            "phone": h["contact"].get("phone", "")}
+    body = (Path(__file__).with_name("pult_template.html").read_text(encoding="utf-8")
+            .replace("__COUNT__", str(len(items)))
+            .replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")))
+    return ('<!doctype html><html lang="ru"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>'
+            + body + "</body></html>")
+
+
 def build_site(out: Path = ROOT / "_site") -> Path:
     h = load_house()
     photos = list_photos(h)
@@ -175,6 +205,9 @@ def build_site(out: Path = ROOT / "_site") -> Path:
     for p in photos:
         shutil.copy2(p, out / "photos" / p.name)
     (out / "index.html").write_text(site_html(h, [p.name for p in photos]), encoding="utf-8")
+    (out / "pult").mkdir()
+    (out / "pult" / "index.html").write_text(pult_html(h, ["../photos/" + p.name for p in photos]),
+                                             encoding="utf-8")
     (out / ".nojekyll").write_text("")
     return out / "index.html"
 

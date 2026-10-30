@@ -3,7 +3,7 @@ name: "🌐 Сайт дома"
 on:
   push:
     branches: [main]
-    paths: ["house.yaml", "photos/**", "house_auto/site.py", "house_auto/texts.py"]
+    paths: ["house.yaml", "targets.yaml", "photos/**", "house_auto/**", ".github/workflows/site.yml"]
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,9 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python -m house_auto site
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
