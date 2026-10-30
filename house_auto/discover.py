@@ -53,7 +53,8 @@ def telegram(keywords: list[str]) -> str:
     env = os.environ.get
     if not (env("TG_API_ID") and env("TG_API_HASH") and env("TG_SESSION")):
         raise SystemExit("нет TG_API_ID / TG_API_HASH / TG_SESSION")
-    client = TelegramClient(StringSession(env("TG_SESSION", "")), int(env("TG_API_ID", "0")), env("TG_API_HASH", ""))
+    client = TelegramClient(StringSession(env("TG_SESSION", "")), int(env("TG_API_ID", "0")), env("TG_API_HASH", ""),
+                        timeout=15, connection_retries=2, request_retries=2)
     client.connect()
     if not client.is_user_authorized():
         raise SystemExit("Сначала выполните: python -m house_auto login")

@@ -58,7 +58,8 @@ class Report:
 
 
 def run(*, dry_run: bool = False, only: set[str] | None = None, force: bool = False,
-        state: State | None = None, poster_factory=make_poster, sleep=time.sleep) -> Report:
+        state: State | None = None, poster_factory=make_poster, sleep=time.sleep,
+        progress=lambda line: None) -> Report:
     house = load_house()
     targets, settings = load_targets()
     state = state or State()
@@ -91,6 +92,7 @@ def run(*, dry_run: bool = False, only: set[str] | None = None, force: bool = Fa
                 if t.platform in last_sent:
                     wait = random.uniform(*delay) - (time.monotonic() - last_sent[t.platform])
                     if wait > 0:
+                        progress(f"⏳ пауза {wait:.0f} с перед «{t.name or t.id}»")
                         sleep(wait)
                 prev = state.live.get(t.id)
                 if prev and t.delete_previous:
@@ -104,10 +106,12 @@ def run(*, dry_run: bool = False, only: set[str] | None = None, force: bool = Fa
                 last_sent[t.platform] = time.monotonic()
                 state.record(t.id, "ok", ref=ref)
                 report.ok.append((t, ref.get("link", "")))
+                progress(f"✅ {t.name or t.id}: {ref.get('link') or 'ok'}")
             except PosterError as e:
                 last_sent[t.platform] = time.monotonic()
                 state.record(t.id, "error", error=str(e))
                 report.failed.append((t, str(e)))
+                progress(f"❌ {t.name or t.id}: {e}")
                 if e.stop_platform:
                     stopped[t.platform] = str(e)
             finally:

@@ -37,7 +37,8 @@ class TelegramUserPoster:
         if not (api_id and api_hash and session):
             raise PosterError("нет TG_API_ID / TG_API_HASH / TG_SESSION — см. README, раздел Telegram",
                               stop_platform=True)
-        self.client = TelegramClient(StringSession(session), int(api_id), api_hash)
+        self.client = TelegramClient(StringSession(session), int(api_id), api_hash,
+                                     timeout=15, connection_retries=2, request_retries=2)
         self.client.connect()
         if not self.client.is_user_authorized():
             raise PosterError("сессия Telegram недействительна — заново выполните login", stop_platform=True)

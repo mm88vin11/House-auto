@@ -83,7 +83,8 @@ def cmd_login(_):
 
     api_id = os.environ.get("TG_API_ID") or input("api_id (с my.telegram.org): ").strip()
     api_hash = os.environ.get("TG_API_HASH") or input("api_hash: ").strip()
-    with TelegramClient(StringSession(), int(api_id), api_hash) as client:
+    with TelegramClient(StringSession(), int(api_id), api_hash,
+                        timeout=15, connection_retries=2, request_retries=2) as client:
         me = client.get_me()
         print(f"\nВход выполнен: {me.first_name} (@{me.username or '—'})")
         print("\nСкопируйте строку ниже целиком в секрет TG_SESSION (никому её не показывайте!):\n")

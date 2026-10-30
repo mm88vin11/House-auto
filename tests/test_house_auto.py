@@ -137,5 +137,25 @@ class SiteTest(unittest.TestCase):
         self.assertIn("photos/plan.jpg", html)
 
 
+class AppHelpersTest(unittest.TestCase):
+    def test_toggle_target_and_price_keep_file_valid(self):
+        from house_auto.app import set_price, toggle_target
+        from house_auto.config import ROOT
+        d = Path(tempfile.mkdtemp())
+        tp, hp = d / "targets.yaml", d / "house.yaml"
+        tp.write_text((ROOT / "targets.yaml").read_text(encoding="utf-8"), encoding="utf-8")
+        hp.write_text((ROOT / "house.yaml").read_text(encoding="utf-8"), encoding="utf-8")
+        toggle_target(tp, "tg_shahtersk", False)     # enabled берётся из defaults — строка добавится
+        toggle_target(tp, "my_vk_wall", True)        # строка enabled есть — заменится
+        by_id = {t.id: t for t in load_targets(tp)[0]}
+        self.assertFalse(by_id["tg_shahtersk"].enabled)
+        self.assertTrue(by_id["my_vk_wall"].enabled)
+        self.assertTrue(by_id["tg_enakievo_chat"].enabled)
+        set_price(hp, 1450000)
+        self.assertEqual(load_house(hp)["price"], 1450000)
+        set_price(hp, None)
+        self.assertIsNone(load_house(hp)["price"])
+
+
 if __name__ == "__main__":
     unittest.main()

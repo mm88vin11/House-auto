@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-ROOT = Path(__file__).resolve().parent.parent
+# Папка с данными (house.yaml, targets.yaml, photos/, state/). Приложение задаёт её через
+# HOUSE_AUTO_HOME до импорта остальных модулей; по умолчанию — корень репозитория.
+ROOT = Path(os.environ.get("HOUSE_AUTO_HOME") or Path(__file__).resolve().parent.parent)
 PHOTO_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
 PLATFORMS = {"telegram", "telegram_bot", "vk", "manual"}
