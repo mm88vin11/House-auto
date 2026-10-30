@@ -12,6 +12,11 @@
                                     └──────────────►  сайт дома на GitHub Pages (все фото, план, кнопка «Позвонить»)
 ```
 
+## 🔗 По ссылке, с любого устройства
+
+- **Пульт публикации:** https://claude.ai/artifact/RLMGVBiBs6NYvzmXzkupdv — все площадки, тексты в одно касание, отметки «опубликовано» синхронно между устройствами, подсказки «пора повторить».
+- **Объявление для покупателей:** https://claude.ai/artifact/FJk5SVvAD36iTBJxUFRTwL — чтобы ставить в объявления, откройте доступ по ссылке (Share).
+
 ## 📦 Приложение (самый простой путь)
 
 **Скачать:** [для Windows](https://github.com/mm88vin11/House-auto/raw/app/HouseAuto-Windows.zip) · [для Mac](https://github.com/mm88vin11/House-auto/raw/app/HouseAuto-Mac.zip). Распакуйте, запустите
